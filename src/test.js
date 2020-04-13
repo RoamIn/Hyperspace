@@ -608,7 +608,7 @@ function proxy ({ hostname, port, protocol }) {
 
     return new Promise(resolve => {
         request({
-            url: 'https://www.badidu.com',
+            url: 'https://www.douban.com/group/510976/discussion?start=0',
             timeout: 5000,
             method: 'GET',
             proxy,
@@ -621,7 +621,9 @@ function proxy ({ hostname, port, protocol }) {
                 return resolve([error])
             }
 
-            return resolve([null, true])
+            if (body.indexOf('杭州相亲小组') !== -1) {
+                return resolve([null, true])
+            }
 
             return resolve([new Error('Invalid')])
         })

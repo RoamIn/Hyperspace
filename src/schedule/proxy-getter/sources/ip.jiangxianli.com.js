@@ -1,6 +1,7 @@
 const url = 'https://ip.jiangxianli.com/?page=1'
 
 module.exports = {
+    name: '高可用全球免费代理IP库',
     url,
     handler: ($) => {
         const $ips = $('.layui-table tbody tr')

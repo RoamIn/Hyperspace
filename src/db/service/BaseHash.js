@@ -1,14 +1,6 @@
 const client = require('../index')
 const typeOf = require('../../utils/type-of')
-
-// {
-//     protocol: 'http',
-//     hostname: '167.71.183.113',
-//     port: '8888'
-// }
-function getProxyKey ({ hostname, port }) {
-    return `${hostname}:${port}`
-}
+const getProxyKey = require('../../helper/get-proxy-key')
 
 class BaseService {
     constructor(table) {
@@ -27,10 +19,8 @@ class BaseService {
         })
     }
 
-    get (proxy) {
-        const proxyKey = getProxyKey(proxy)
-
-        return this.promise('hget', proxyKey)
+    get (...args) {
+        return this.promise('hget', ...args)
     }
 
     put (proxies) {
@@ -49,10 +39,22 @@ class BaseService {
         }
     }
 
-    delete (proxy) {
-        const proxyKey = getProxyKey(proxy)
+    delete (...args) {
+        return this.promise('hdel', ...args)
+    }
 
-        return this.promise('hdel', proxyKey)
+    pop (...args) {
+        return new Promise(async resolve => {
+            const [getErr, res] = await this.get(...args)
+
+            if (getErr) return resolve([getErr])
+
+            const [delErr] = await this.delete(...args)
+
+            if (delErr) return resolve([delErr])
+
+            resolve([null, res])
+        })
     }
 
     exists (proxy) {

@@ -27,7 +27,7 @@ function httpGet (uri) {
 
         get(uri, {
             headers: {
-                'User-Agent': uaList[Math.parseInt(uaList.length * Math.random())],
+                'User-Agent': uaList[parseInt(uaList.length * Math.random())],
                 'Accept': '*/*',
                 'Connection': 'keep-alive',
                 'Accept-Language': 'zh-CN,zh;q=0.8'
