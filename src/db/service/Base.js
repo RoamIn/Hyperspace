@@ -33,6 +33,10 @@ class BaseService {
         return this.promise('spop')
     }
 
+    delete (...args) {
+        return this.promise('srem', ...args)
+    }
+
     get () {
         return this.promise('srandmember')
     }

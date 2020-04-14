@@ -12,19 +12,19 @@ module.exports = {
         error (message) {
             return event.emit('proxy-getter', {
                 status: 'ERROR',
-                message: `ERROR:\t${message}`
+                message: `${message}`
             })
         },
         insert (message) {
             return event.emit('proxy-getter', {
                 status: 'INSERT',
-                message: `INSERT:\t${message}`
+                message: `${message}`
             })
         },
         done (message) {
             return event.emit('proxy-getter', {
                 status: 'DONE',
-                message: `DONE:\t${message}`
+                message: `t${message}`
             })
         }
     },
@@ -32,19 +32,25 @@ module.exports = {
         error (message) {
             return event.emit('proxy-checker', {
                 status: 'ERROR',
-                message: `ERROR:\t${message}`
+                message: `${message}`
             })
         },
         insert (message) {
             return event.emit('proxy-checker', {
                 status: 'INSERT',
-                message: `INSERT:\t${message}`
+                message: `${message}`
+            })
+        },
+        delete (message) {
+            return event.emit('proxy-checker', {
+                status: 'DELETE',
+                message: `${message}`
             })
         },
         done (message) {
             return event.emit('proxy-checker', {
                 status: 'DONE',
-                message: `DONE:\t${message}`
+                message: `${message}`
             })
         }
     },

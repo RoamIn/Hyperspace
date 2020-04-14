@@ -19,7 +19,7 @@ async function task (url, handler, name) {
 
         if (proxies.length > 0) {
             const [saveErr] = await service.RawProxy.put(proxies.map(proxy => JSON.stringify(proxy)))
-            if (saveErr) return console.error(saveErr)
+            if (saveErr) return emit.error(`service.[RawProxy.put] \t ${saveErr.message}`)
 
             emit.insert(`${proxies.length} proxies from ${url}`)
         }
@@ -39,7 +39,7 @@ async function init () {
     const [err, sources] = getFiles(path.join(__dirname, './sources'))
 
     if (err) {
-        return emit.error(`[getFiles] \t ${e.message}`)
+        return emit.error(`[getFiles] \t ${err.message}`)
     }
 
     sources.forEach(source => {

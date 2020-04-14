@@ -1,27 +1,73 @@
 const typeOf = require('../../utils/type-of')
+const { proxyCheckerEmit: emit } = require('../../utils/event')
 const service = require('../../db/service')
 const checkProxyUseful = require('./check-proxy-useful')
 
-async function task (serviceName) {
-    const [err, proxyStr] = await service[serviceName].pop()
+async function rawProxyChecker () {
+    const [err, proxyStr] = await service.RawProxy.pop()
 
-    if (err) return console.error(err)
-    if (typeOf(proxyStr) === 'Null') return console.log('DONE')
+    if (err) return emit.error(`[service.RawProxy.pop] \t ${err.message}`)
+    if (typeOf(proxyStr) === 'Null') return emit.done(`[RawProxy]`)
 
     const [failed] = await checkProxyUseful(JSON.parse(proxyStr))
 
-    if (!failed) {
-        console.log('get', proxyStr)
-        await service.Proxy.put(proxyStr)
+    if (failed) {
+        emit.delete(`[${proxyStr}`)
+    } else {
+        const [saveErr] = await service.Proxy.put(proxyStr)
+
+        if (saveErr) return emit.error(`[ervice.Proxy.put] \t ${saveErr.message}`)
+
+        emit.insert(`[${proxyStr}`)
     }
 
-    task(serviceName)
+    rawProxyChecker()
 }
 
-function init (serviceName, taskNum = 10) {
-    while (taskNum--) {
-        task(serviceName)
+async function proxyChecker () {
+    const [err, proxyStrList] = await service.Proxy.getAll()
+
+    if (err) return emit.error(`[service.Proxy.pop] \t ${err.message}`)
+
+    proxyCheckerTask(proxyStrList)
+}
+
+function checkProxy (proxyStr) {
+    return new Promise(async resolve => {
+        const [failed] = await checkProxyUseful(JSON.parse(proxyStr))
+
+        if (failed) {
+            const [delErr] = await service.Proxy.delete(proxyStr)
+
+            if (delErr) {
+                emit.error(`[service.Proxy.delete] \t ${delErr.message}`)
+
+                return resolve([delErr])
+            }
+
+            emit.delete(`[${proxyStr}`)
+        }
+
+        resolve([null, true])
+    })
+}
+
+async function proxyCheckerTask (proxyStrList) {
+    const queue = proxyStrList.splice(0, 10)
+    const promises = []
+
+    for (let i = 0; i < queue.length; i++) {
+        promises.push(checkProxy(queue[i]))
     }
+
+    await Promise.all(promises)
+
+    if (proxyStrList.length === 0) return emit.done(`[Proxy]`)
+
+    proxyCheckerTask(proxyStrList)
 }
 
-module.exports = init
+module.exports = {
+    rawProxyChecker,
+    proxyChecker
+}
