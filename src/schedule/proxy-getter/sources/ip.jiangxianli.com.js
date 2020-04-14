@@ -4,15 +4,15 @@ module.exports = {
     name: '高可用全球免费代理IP库',
     url,
     handler: ($) => {
-        const $ips = $('.layui-table tbody tr')
+        const $proxies = $('.layui-table tbody tr')
         const scriptText = $('script').last().html() // script should use html() but not text()
-        const ips = []
+        const proxies = []
 
-        $ips.each(function () {
+        $proxies.each(function () {
             const $this = $(this)
             const $tds = $this.find('td')
 
-            ips.push({
+            proxies.push({
                 protocol: $tds.eq(3).text().trim().toLowerCase(),
                 hostname: $tds.eq(0).text().trim(),
                 port: $tds.eq(1).text().trim()
@@ -26,7 +26,7 @@ module.exports = {
 
         return {
             next: page < pageLength ? url.replace(/(\d+)$/, page + 1) : false,
-            ips
+            proxies
         }
     }
 }

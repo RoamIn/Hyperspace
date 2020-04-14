@@ -1,7 +1,9 @@
 const client = require('../index')
 const typeOf = require('../../utils/type-of')
-const getProxyKey = require('../../helper/get-proxy-key')
 
+/**
+ * Set
+ */
 class BaseService {
     constructor(table) {
         this.table = table
@@ -20,19 +22,23 @@ class BaseService {
     }
 
     put (proxies) {
-        const values = []
-
-        if (typeOf(proxies) === 'Array') {
-            values.push(...proxies.map(proxy => getProxyKey(proxy)))
-        } else {
-            values.push(getProxyKey(proxies))
+        if (typeOf(proxies) !== 'Array') {
+            proxies = [proxies]
         }
 
-        return this.promise('sadd', ...values)
+        return this.promise('sadd', ...proxies)
     }
 
     pop () {
         return this.promise('spop')
+    }
+
+    get () {
+        return this.promise('srandmember')
+    }
+
+    getAll () {
+        return this.promise('smembers')
     }
 }
 

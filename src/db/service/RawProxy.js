@@ -1,6 +1,6 @@
-const BaseHashService = require('./BaseHash')
+const BaseService = require('./Base')
 
-class RawProxyService extends BaseHashService {
+class RawProxyService extends BaseService {
     constructor() {
         super('raw_proxy')
     }

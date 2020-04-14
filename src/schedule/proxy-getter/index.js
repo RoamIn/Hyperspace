@@ -2,41 +2,45 @@ const path = require('path')
 const httpGet = require('../../utils/http-get')
 const getFiles = require('../../utils/get-files')
 const sleep = require('../../utils/sleep')
+const { proxyGetterEmit: emit } = require('../../utils/event')
 const service = require('../../db/service')
 
 async function task (url, handler, name) {
     const [err, $] = await httpGet(url) // get page
 
     // check error
-    if (err) return console.error(err)
+    if (err) {
+        return emit.error(`[httpGet] \t ${err.message}`)
+    }
 
     // catch error while parsing HTML
     try {
-        const { next, ips } = handler($)
+        const { next, proxies } = handler($)
 
-        console.log(url)
+        if (proxies.length > 0) {
+            const [saveErr] = await service.RawProxy.put(proxies.map(proxy => JSON.stringify(proxy)))
+            if (saveErr) return console.error(saveErr)
 
-        const [saveErr] = await service.RawProxy.put(ips)
-        if (saveErr) return console.error(saveErr)
-
-        const [saveSetErr] = await service.RawProxySet.put(ips)
-        if (saveSetErr) return console.error(saveSetErr)
+            emit.insert(`${proxies.length} proxies from ${url}`)
+        }
 
         if (next) {
             await sleep(1000)
             return task(next, handler, name)
         }
 
-        console.log(`DONE\t[${name}]`)
+        emit.done(`[${name}]`)
     } catch (e) {
-        return console.error(e)
+        return emit.error(`[handler] \t ${e.message}`)
     }
 }
 
 async function init () {
     const [err, sources] = getFiles(path.join(__dirname, './sources'))
 
-    if (err) throw console.error(err)
+    if (err) {
+        return emit.error(`[getFiles] \t ${e.message}`)
+    }
 
     sources.forEach(source => {
         task(source.url, source.handler, source.name)
