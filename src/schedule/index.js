@@ -19,10 +19,16 @@ function handleProxyCheckerEvent ({ status, message }) {
 }
 
 function init () {
-    // every 10 minutes
-    schedule.scheduleJob('*/10 * * * *', () => {
-        log.schedule.info('Schedule Proxy Getter:' + new Date())
-        proxyGetter()
+    proxyGetter().forEach(({ source, task }) => {
+        // immediate execute
+        task()
+        log.schedule.info(`Schedule Proxy Getter [${source.name}]: ${new Date()}`)
+
+        // register schedule
+        schedule.scheduleJob(source.schedule || '*/10 * * * *', () => {
+            log.schedule.info(`Schedule Proxy Getter [${source.name}]: ${new Date()}`)
+            task()
+        })
     })
 
     // every 10 minutes

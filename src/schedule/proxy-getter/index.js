@@ -5,7 +5,13 @@ const sleep = require('../../utils/sleep')
 const { proxyGetterEmit: emit } = require('../../utils/event')
 const service = require('../../db/service')
 
-async function task (url, handler, name) {
+/**
+ * @param {String} url 目标地址
+ * @param {Function} handler 页面解析
+ * @param {String} name 目标名称
+ * @param {Number} page 页码
+ */
+async function task (url, handler, name, page = 1) {
     const [err, $] = await httpGet(url) // get page
 
     // check error
@@ -15,7 +21,7 @@ async function task (url, handler, name) {
 
     // catch error while parsing HTML
     try {
-        const { next, proxies } = handler($)
+        const { next, proxies } = handler($, page)
 
         if (proxies.length > 0) {
             const [saveErr] = await service.RawProxy.put(proxies.map(proxy => JSON.stringify(proxy)))
@@ -26,7 +32,7 @@ async function task (url, handler, name) {
 
         if (next) {
             await sleep(1000)
-            return task(next, handler, name)
+            return task(next, handler, name, page + 1)
         }
 
         emit.done(`[${name}]`)
@@ -35,16 +41,23 @@ async function task (url, handler, name) {
     }
 }
 
-async function init () {
+function init () {
     const [err, sources] = getFiles(path.join(__dirname, './sources'))
 
     if (err) {
         return emit.error(`[getFiles] \t ${err.message}`)
     }
 
-    sources.forEach(source => {
-        task(source.url, source.handler, source.name)
+    const tasks = sources.map(source => {
+        return {
+            source,
+            task () {
+                task(source.url, source.handler, source.name)
+            }
+        }
     })
+
+    return tasks
 }
 
 module.exports = init
