@@ -3,7 +3,7 @@ const url = 'https://ip.jiangxianli.com/?page=1'
 module.exports = {
     name: '高可用全球免费代理IP库',
     url,
-    schedule: '*/10 * * * *', // every 10 minutes
+    schedule: '*/3 * * * *',
     handler: ($) => {
         const $proxies = $('.layui-table tbody tr')
         const scriptText = $('script').last().html() // script should use html() but not text()

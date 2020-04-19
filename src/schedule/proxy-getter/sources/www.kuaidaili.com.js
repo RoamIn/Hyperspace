@@ -5,7 +5,7 @@ const url = 'https://www.kuaidaili.com/free/inha/1/'
 module.exports = {
     name: '快代理',
     url,
-    schedule: '*/30 * * * *', // every 30 minutes
+    schedule: '*/3 * * * *',
     handler: ($) => {
         const $proxies = $('.table tbody tr')
         const $next = $('#listnav .active').parent().next().find('a')

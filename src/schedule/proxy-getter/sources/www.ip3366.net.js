@@ -5,7 +5,7 @@ const url = 'http://www.ip3366.net/?stype=1&page=1'
 module.exports = {
     name: '云代理',
     url,
-    schedule: '*/30 * * * *', // every 30 minutes
+    schedule: '*/3 * * * *',
     handler: ($) => {
         const $proxies = $('#list tbody tr')
         const $next = $('#listnav font').next()

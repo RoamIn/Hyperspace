@@ -32,7 +32,7 @@ function init () {
     })
 
     // every 10 minutes
-    schedule.scheduleJob('*/15 * * * *', () => {
+    schedule.scheduleJob('*/5 * * * *', () => {
         log.schedule.info('Schedule Proxy Checker:' + new Date())
         proxyChecker('Proxy')
     })

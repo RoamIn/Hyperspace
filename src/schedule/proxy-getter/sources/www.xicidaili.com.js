@@ -5,7 +5,7 @@ const url = 'https://www.xicidaili.com/nn/1'
 module.exports = {
     name: '国内高匿代理IP',
     url,
-    schedule: '*/60 * * * *', // every 60 minutes
+    schedule: '*/3 * * * *',
     handler: ($) => {
         const $proxies = $('#ip_list tbody tr').slice(1)
         const $next = $('.pagination .next_page')

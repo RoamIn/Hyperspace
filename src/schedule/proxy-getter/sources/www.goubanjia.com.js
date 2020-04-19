@@ -30,7 +30,7 @@ function getPort (str) {
 module.exports = {
     name: '全网代理IP',
     url,
-    schedule: '*/10 * * * *', // every 10 minutes
+    schedule: '*/3 * * * *',
     handler: ($) => {
         const $proxies = $('.table tbody tr')
         const proxies = []
