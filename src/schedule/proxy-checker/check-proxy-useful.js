@@ -8,7 +8,7 @@ function getCookie () {
     return `bid=${bid}`
 }
 
-function checkProxyUseful ({ hostname, port, protocol }, url = 'https://www.douban.com/group/510976/discussion?start=0') {
+function checkProxyUseful ({ hostname, port, protocol }, url = 'https://www.baidu.com/') {
     const proxy = `${protocol}://${hostname}:${port}`
 
     return new Promise(resolve => {
@@ -26,11 +26,7 @@ function checkProxyUseful ({ hostname, port, protocol }, url = 'https://www.doub
             }
 
             if (response && response.statusCode === 200) {
-                if (body.indexOf('杭州') !== -1) {
-                    return resolve([null, true])
-                } else {
-                    return resolve([new Error('PROXY_ERROR')])
-                }
+                return resolve([null, true])
             } else {
                 return resolve([new Error(`STATUS_CODE: ${response.statusCode || 'UNKNOWN_CODE'}`)])
             }
