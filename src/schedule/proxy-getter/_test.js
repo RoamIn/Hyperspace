@@ -32,7 +32,8 @@ async function init () {
     // const source = require('./sources/www.xicidaili.com')
     // const source = require('./sources/www.goubanjia.com')
     // const source = require('./sources/www.kuaidaili.com')
-    const source = require('./sources/www.ip3366.net')
+    // const source = require('./sources/www.ip3366.net')
+    const source = require('./sources/www.89ip.cn')
 
     task(source.url, source.handler, source.name)
 }
